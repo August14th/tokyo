@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace tokyo
 {
-    class GraphicBuffer
+    public class GraphicBuffer
     {
         public Bitmap Current { get; private set; }
 

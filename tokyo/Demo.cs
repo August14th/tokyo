@@ -40,7 +40,7 @@ namespace tokyo
                 Size = new Size(Width, Height),
                 StartPosition = FormStartPosition.CenterScreen
             };
-            camera = new Camera { Position = new Vector(0, 0, 10), Target = Vector.Zero };
+            camera = new Camera { Position = new Vector(0, 0, 10), Target = Vector.Zero, Fov = (float)Math.PI / 4, ZNear = 0.1f, ZFar = 1f };
             buffer = new GraphicBuffer(Width, Height);
             defaultFont = new Font(new FontFamily("Microsoft Yahei"), 14);
         }
@@ -81,12 +81,15 @@ namespace tokyo
         private void Render(TimeSpan dt)
         {
             var g = buffer.BackgroundGraphicDevice;
-            buffer.BackgroundGraphicDevice.Clear(Color.White);
-            g.DrawString($"FPS: {1000.0 / dt.Milliseconds}", defaultFont, Brushes.Black, 0, 0);
+            buffer.BackgroundGraphicDevice.Clear(Color.Black);
+            g.DrawString($"FPS: {1000.0 / dt.Milliseconds}", defaultFont, Brushes.White, 0, 0);
+            Suzanne[0].Rotation += new Vector(0, 0.1f, 0);
             g.DrawMeshes(Suzanne, Color.Blue, camera);
             // g.DrawMeshes(new Mesh[] { Mesh.Cube() }, Color.Blue, camera);
 
             // g.DrawLine(new Point(2, 3, 0.1f), new Point(3, 4, 0.2f), Color.Black);
+
+            // g.DrawTriangle(new Vector(20, 20, 0), new Vector(30, 30, 0), new Vector(10, 30, 6), Color.Black, camera);
 
         }
     }

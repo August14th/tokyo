@@ -86,10 +86,5 @@ namespace tokyo
         {
             return X * v.X + Y * v.Y + Z * v.Z;
         }
-
-        public static implicit operator Point(Vector v)
-        {
-            return new Point((int)v.X, (int)v.Y, v.Z);
-        }
     }
 }

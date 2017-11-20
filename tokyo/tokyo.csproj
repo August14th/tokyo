@@ -52,7 +52,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Point.cs" />
     <Compile Include="Vector.cs" />
     <Compile Include="Demo.cs" />
     <Compile Include="BabylonMeshLoader.cs" />
