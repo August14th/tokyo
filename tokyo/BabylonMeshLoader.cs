@@ -48,7 +48,11 @@ namespace tokyo
                     float y = (float)verticesArray[index * verticesStep + 1].Value;
                     float z = (float)verticesArray[index * verticesStep + 2].Value;
 
-                    mesh.Vertices[index] = new Vector(x, y, z);
+                    float nx = (float)verticesArray[index * verticesStep + 3].Value;
+                    float ny = (float)verticesArray[index * verticesStep + 4].Value;
+                    float nz = (float)verticesArray[index * verticesStep + 5].Value;
+
+                    mesh.Vertices[index] = new Vertex { Coord = new Vector(x, y, z), Normal = new Vector(nx, ny, nz) };
                 }
 
                 for (int index = 0; index < facesCount; index++)

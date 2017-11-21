@@ -47,6 +47,10 @@ namespace tokyo
             var bits = canvas.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.WriteOnly, canvas.PixelFormat);
             Marshal.Copy(white, 0, bits.Scan0, white.Length);
             canvas.UnlockBits(bits);
+            for (var index = 0; index < zBuffer.Length; index++)
+            {
+                zBuffer[index] = float.MaxValue;
+            }
         }
 
         public void Dispose()
@@ -64,10 +68,10 @@ namespace tokyo
             return min + (max - min) * Clamp(gradient);
         }
 
-        private void ProcessScanLine(int y, Vector pa, Vector pb, Vector pc, Vector pd, Color color)
+        private void ProcessScanLine(ScanLineData data, Vector pa, Vector pb, Vector pc, Vector pd, Color color)
         {
-            var gradient1 = pa.Y != pb.Y ? (y - pa.Y) / (pb.Y - pa.Y) : 1;
-            var gradient2 = pc.Y != pd.Y ? (y - pc.Y) / (pd.Y - pc.Y) : 1;
+            var gradient1 = pa.Y != pb.Y ? (data.Y - pa.Y) / (pb.Y - pa.Y) : 1;
+            var gradient2 = pc.Y != pd.Y ? (data.Y - pc.Y) / (pd.Y - pc.Y) : 1;
 
             int sx = (int)Interpolate(pa.X, pb.X, gradient1);
             int ex = (int)Interpolate(pc.X, pd.X, gradient2);
@@ -75,38 +79,50 @@ namespace tokyo
             float sz = Interpolate(pa.Z, pb.Z, gradient1);
             float ez = Interpolate(pc.Z, pd.Z, gradient2);
 
+            float radio = data.radio;
             for (int x = sx; x < ex; x++)
             {
                 float gradient = (x - sx) / (float)(ex - sx);
-                var z = Interpolate(sz, ez, gradient);
-                DrawPoint(new Vector(x, y, z), color);
+                var z = Interpolate(sz, ez, gradient);                               
+                DrawPoint(new Vector(x, data.Y, z), Color.FromArgb((int)(color.R * radio), (int)(color.G * radio), (int)(color.A * radio)));
             }
         }
 
-        public void DrawTriangle(Vector p1, Vector p2, Vector p3, Color color)
+        private float ComputeRadio(Vector vertex, Vector normal, Vector lightPos)
         {
-            if (p1.Y > p2.Y)
+            Vector lightDirection = (lightPos - vertex).Normalize();
+            return Math.Max(0, lightDirection.Dot(normal.Normalize()));
+        }
+
+        public void DrawTriangle(int idx, Vertex v1, Vertex v2, Vertex v3, Color color)
+        {
+            if (v1.Pos.Y > v2.Pos.Y)
             {
-                var temp = p2;
-                p2 = p1;
-                p1 = temp;
+                var temp = v2;
+                v2 = v1;
+                v1 = temp;
             }
 
-            if (p2.Y > p3.Y)
+            if (v2.Pos.Y > v3.Pos.Y)
             {
-                var temp = p2;
-                p2 = p3;
-                p3 = temp;
+                var temp = v2;
+                v2 = v3;
+                v3 = temp;
             }
 
-            if (p1.Y > p2.Y)
+            if (v1.Pos.Y > v2.Pos.Y)
             {
-                var temp = p2;
-                p2 = p1;
-                p1 = temp;
+                var temp = v2;
+                v2 = v1;
+                v1 = temp;
             }
 
             float dP1P2, dP1P3;
+
+            Vector p1 = v1.Pos;
+            Vector p2 = v2.Pos;
+            Vector p3 = v3.Pos;
+
             if (p2.Y - p1.Y > 0)
                 dP1P2 = (p2.X - p1.X) / (p2.Y - p1.Y);
             else
@@ -116,18 +132,25 @@ namespace tokyo
             else
                 dP1P3 = 0;
 
+            Vector lightPos = new Vector(0, 10, 10);
+            ScanLineData data = new ScanLineData { };
+
+            Vector facePos = (v1.Coord + v2.Coord + v3.Coord) / 3;
+            Vector faceNormal = (v1.Normal + v2.Normal + v3.Normal) / 3;
+            data.radio = ComputeRadio(facePos, faceNormal, lightPos);
+
             if (dP1P2 > dP1P3)
             {
-
                 for (int y = (int)p1.Y; y <= p3.Y; y++)
                 {
+                    data.Y = y;
                     if (y < p2.Y)
                     {
-                        ProcessScanLine(y, p1, p3, p1, p2, color);
+                        ProcessScanLine(data, p1, p3, p1, p2, color);
                     }
                     else
                     {
-                        ProcessScanLine(y, p1, p3, p2, p3, color);
+                        ProcessScanLine(data, p1, p3, p2, p3, color);
                     }
                 }
             }
@@ -135,13 +158,14 @@ namespace tokyo
             {
                 for (int y = (int)p1.Y; y <= p3.Y; y++)
                 {
+                    data.Y = y;
                     if (y < p2.Y)
                     {
-                        ProcessScanLine(y, p1, p2, p1, p3, color);
+                        ProcessScanLine(data, p1, p2, p1, p3, color);
                     }
                     else
                     {
-                        ProcessScanLine(y, p2, p3, p1, p3, color);
+                        ProcessScanLine(data, p2, p3, p1, p3, color);
                     }
                 }
             }
@@ -149,10 +173,8 @@ namespace tokyo
 
         public void DrawLine(Vector p0, Vector p1, Color color)
         {
-            DrawPoint(p0, color);
-            DrawPoint(p1, color);
             Vector middle = (p0 + p1) / 2;
-            if (middle == p0 || middle == p1) return;
+            DrawPoint(middle, color);
             DrawLine(p0, middle, color);
             DrawLine(middle, p1, color);
         }
@@ -161,11 +183,11 @@ namespace tokyo
         {
             int px = (int)point.X;
             int py = (int)point.Y;
-        
+
             if (px >= 0 && px < Width && py >= 0 && py < Height)
             {
                 var index = py * Width + px;
-                if (zBuffer[index] > point.Z)
+                if (zBuffer[index] < point.Z)
                 {
                     return;
                 }
@@ -179,17 +201,17 @@ namespace tokyo
             canvasGraphics.DrawString(str, font, brush, x, y);
         }
 
-        public void DrawTriangle(Vector pa, Vector pb, Vector pc, Color color, Camera camera)
+        public void DrawTriangle(int idx, Vertex pa, Vertex pb, Vertex pc, Color color, Camera camera)
         {
-            var a = pa - pb;
-            var b = pc - pb;
+            var a = pa.Pos - pb.Pos;
+            var b = pc.Pos - pb.Pos;
             var n = a.Cross(b);
             var v = camera.Target - camera.Position;
-            if (n.Dot(v) < 0)
+            if (n.Dot(v) > 0)
             {
                 return;
             }
-            DrawTriangle(pa, pb, pc, color);
+            DrawTriangle(idx, pa, pb, pc, color);
         }
 
         public void DrawMeshes(Mesh[] meshes, Color color, Camera camera)
@@ -208,12 +230,12 @@ namespace tokyo
                 for (int i = 0; i < mesh.Surfaces.Length; i++)
                 {
                     var face = mesh.Surfaces[i];
-                    Vector v1 = Project(mesh.Vertices[face.A], transform);
-                    Vector v2 = Project(mesh.Vertices[face.B], transform);
-                    Vector v3 = Project(mesh.Vertices[face.C], transform);
+                    Vertex v1 = Project(mesh.Vertices[face.A], transform, world);
+                    Vertex v2 = Project(mesh.Vertices[face.B], transform, world);
+                    Vertex v3 = Project(mesh.Vertices[face.C], transform, world);
 
-                    Color[] colors = new Color[] { Color.Gray, Color.White, Color.Silver};
-                    DrawTriangle(v1, v2, v3, colors[i % colors.Length], camera);
+                    Color[] colors = new Color[] { Color.White, Color.Gray, Color.Silver };
+                    DrawTriangle(i, v1, v2, v3, colors[0 % colors.Length], camera);
                 }
             }
         }
@@ -223,14 +245,26 @@ namespace tokyo
             canvas.SetPixel(x, y, color);
         }
 
-        private Vector Project(Vector src, Matrix transforom)
+        private Vertex Project(Vertex src, Matrix transforom, Matrix world)
         {
-            Vector target = transforom.Transform(src);
+            Vector pos = transforom.Transform(src.Coord);
 
-            target.X = target.X * Width + Width / 2f;
-            target.Y = -target.Y * Height + Height / 2f;
+            pos.X = pos.X * Width + Width / 2f;
+            pos.Y = -pos.Y * Height + Height / 2f;
 
-            return target;
+            return new Vertex
+            {
+                Pos = pos,
+                Coord = world.Transform(src.Coord),
+                Normal = world.Transform(src.Normal)
+            };
         }
+    }
+
+    class ScanLineData
+    {
+        public float radio;
+
+        public float Y;
     }
 }

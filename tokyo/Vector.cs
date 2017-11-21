@@ -86,5 +86,10 @@ namespace tokyo
         {
             return X * v.X + Y * v.Y + Z * v.Z;
         }
+
+        override public String ToString()
+        {
+            return "(" + this.X + ", " + this.Y + ", " + this.Z + ")";
+        }
     }
 }

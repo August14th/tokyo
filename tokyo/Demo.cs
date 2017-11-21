@@ -74,7 +74,7 @@ namespace tokyo
         {
             using (var g = form.CreateGraphics())
             {
-                g.DrawImage(buffer.Current, System.Drawing.Point.Empty);
+                g.DrawImage(buffer.Current, Point.Empty);
             }
         }
 
@@ -83,14 +83,8 @@ namespace tokyo
             var g = buffer.BackgroundGraphicDevice;
             buffer.BackgroundGraphicDevice.Clear(Color.Black);
             g.DrawString($"FPS: {1000.0 / dt.Milliseconds}", defaultFont, Brushes.White, 0, 0);
-            Suzanne[0].Rotation += new Vector(0, 0.1f, 0);
+            Suzanne[0].Rotation += new Vector(0, 0.01f, 0);
             g.DrawMeshes(Suzanne, Color.Blue, camera);
-            // g.DrawMeshes(new Mesh[] { Mesh.Cube() }, Color.Blue, camera);
-
-            // g.DrawLine(new Point(2, 3, 0.1f), new Point(3, 4, 0.2f), Color.Black);
-
-            // g.DrawTriangle(new Vector(20, 20, 0), new Vector(30, 30, 0), new Vector(10, 30, 6), Color.Black, camera);
-
         }
     }
 }
