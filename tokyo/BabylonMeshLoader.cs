@@ -8,11 +8,18 @@ using System.Threading.Tasks;
 
 namespace tokyo
 {
-    class BabylonMeshLoader : MeshLoader
+    public class BabylonMeshLoader : MeshLoader
     {
+        private String folder;
+
+        public BabylonMeshLoader(String folder)
+        {
+            this.folder = folder;
+        }
+
         public Mesh[] Load(string modelName)
         {
-            string modelString = File.ReadAllText("babylon" + "/" + modelName + ".json");
+            string modelString = File.ReadAllText(folder + "/" + modelName + ".json");
             dynamic model = JsonConvert.DeserializeObject(modelString);
             var meshes = new List<Mesh>();
             for (int meshIndex = 0; meshIndex < model.meshes.Count; meshIndex++)
