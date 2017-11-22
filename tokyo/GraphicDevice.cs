@@ -97,6 +97,7 @@ namespace tokyo
                         case RenderMode.WireFrame:
                             DrawTriangle0(v1, v2, v3);
                             break;
+                        case RenderMode.PhongLight:
                         case RenderMode.FlatLight:
                             DrawTriangle1(v1, v2, v3);
                             break;
@@ -156,10 +157,16 @@ namespace tokyo
             else
                 dP1P3 = 0;
 
+            float nl1 = ComputeNDotL(v1.Coord, v1.Normal);
+            float nl2 = ComputeNDotL(v2.Coord, v2.Normal);
+            float nl3 = ComputeNDotL(v3.Coord, v3.Normal);
+
             Vector facePos = (v1.Coord + v2.Coord + v3.Coord) / 3;
             Vector faceNormal = (v1.Normal + v2.Normal + v3.Normal) / 3;
+            float nl = ComputeNDotL(facePos, faceNormal);
 
-            ScanLineData data = new ScanLineData { radio = ComputeRadio(facePos, faceNormal) };
+            ScanLineData data = new ScanLineData { };
+            data.ndotl = nl;
 
             if (dP1P2 > dP1P3)
             {
@@ -168,10 +175,18 @@ namespace tokyo
                     data.Y = y;
                     if (y < p2.Y)
                     {
+                        data.ndotla = nl1;
+                        data.ndotlb = nl3;
+                        data.ndotlc = nl1;
+                        data.ndotld = nl2;
                         ProcessScanLine(data, p1, p3, p1, p2);
                     }
                     else
                     {
+                        data.ndotla = nl1;
+                        data.ndotlb = nl3;
+                        data.ndotlc = nl2;
+                        data.ndotld = nl3;
                         ProcessScanLine(data, p1, p3, p2, p3);
                     }
                 }
@@ -183,10 +198,18 @@ namespace tokyo
                     data.Y = y;
                     if (y < p2.Y)
                     {
+                        data.ndotla = nl1;
+                        data.ndotlb = nl2;
+                        data.ndotlc = nl1;
+                        data.ndotld = nl3;
                         ProcessScanLine(data, p1, p2, p1, p3);
                     }
                     else
                     {
+                        data.ndotla = nl2;
+                        data.ndotlb = nl3;
+                        data.ndotlc = nl1;
+                        data.ndotld = nl3;
                         ProcessScanLine(data, p2, p3, p1, p3);
                     }
                 }
@@ -262,16 +285,28 @@ namespace tokyo
             float sz = Interpolate(pa.Z, pb.Z, gradient1);
             float ez = Interpolate(pc.Z, pd.Z, gradient2);
 
-            float radio = data.radio;
+            float snl = Interpolate(data.ndotla, data.ndotlb, gradient1);
+            float enl = Interpolate(data.ndotlc, data.ndotld, gradient2);
+
             for (int x = sx; x < ex; x++)
             {
                 float gradient = (x - sx) / (float)(ex - sx);
                 var z = Interpolate(sz, ez, gradient);
-                DrawPoint(new Vector(x, data.Y, z), Color.FromArgb((int)(FrontColor.R * radio), (int)(FrontColor.G * radio), (int)(FrontColor.A * radio)));
+                float nl = 0;
+                switch (RenderMode)
+                {
+                    case RenderMode.FlatLight:
+                        nl = data.ndotl;
+                        break;
+                    case RenderMode.PhongLight:
+                        nl = Interpolate(snl, enl, gradient);
+                        break;
+                }                 
+                DrawPoint(new Vector(x, data.Y, z), Color.FromArgb((int)(FrontColor.R * nl), (int)(FrontColor.G * nl), (int)(FrontColor.A * nl)));
             }
         }
 
-        private float ComputeRadio(Vector vertex, Vector normal)
+        private float ComputeNDotL(Vector vertex, Vector normal)
         {
             Vector lightDirection = (LightPos - vertex).Normalize();
             return Math.Max(0, lightDirection.Dot(normal.Normalize()));
@@ -285,7 +320,15 @@ namespace tokyo
 
     class ScanLineData
     {
-        public float radio;
+        public float ndotla;
+
+        public float ndotlb;
+
+        public float ndotlc;
+
+        public float ndotld;
+
+        public float ndotl;
 
         public float Y;
     }

@@ -83,10 +83,12 @@ namespace example
             g.FrontColor = Color.White;
             g.LightPos = new Vector(0, 10, 10);
             // g.RenderMode = RenderMode.WireFrame;
-            g.RenderMode = RenderMode.FlatLight;
+            // g.RenderMode = RenderMode.FlatLight;
+
+            g.RenderMode = RenderMode.PhongLight;
             g.Clear(Color.Black);
             g.DrawString($"FPS: {1000.0 / dt.Milliseconds}", defaultFont, Brushes.White, 0, 0);
-            Suzanne[0].Rotation += new Vector(0, 0.01f, 0);
+            Suzanne[0].Rotation += new Vector(0, 0.1f, 0);
             g.DrawMeshes(Suzanne);
         }
     }
