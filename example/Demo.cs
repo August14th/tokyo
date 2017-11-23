@@ -39,9 +39,13 @@ namespace example
                 Size = new Size(Width, Height),
                 StartPosition = FormStartPosition.CenterScreen
             };
-            camera = new Camera { Position = new Vector(0, 0, 10), Target = Vector.Zero, Fov = (float)Math.PI / 4, ZNear = 0.1f, ZFar = 1f };
-            buffer = new GraphicBuffer(Width, Height);
             defaultFont = new Font(new FontFamily("Microsoft Yahei"), 14);
+            camera = new Camera { Position = new Vector(0, 0, 10), Target = Vector.Zero, Fov = (float)Math.PI / 4, ZNear = 0.1f, ZFar = 1f };
+
+            buffer = new GraphicBuffer(ShadingMode.WireFrame, Width, Height);
+            // buffer = new GraphicBuffer(ShadingMode.Flat, Width, Height);
+            // buffer = new GraphicBuffer(ShadingMode.Phong, Width, Height);
+            // buffer = new GraphicBuffer(ShadingMode.Texture, Width, Height);
         }
 
         public void Run()
@@ -64,7 +68,6 @@ namespace example
                 deltatime = stopwatch.Elapsed;
 
                 stopwatch.Reset();
-                // break;
             }
         }
 
@@ -80,13 +83,9 @@ namespace example
         {
             var g = buffer.BackgroundGraphicDevice;
             g.Camera = camera;
-            g.FrontColor = Color.White;
-            g.LightPos = new Vector(0, 10, 10);
-            // g.RenderMode = RenderMode.WireFrame;
-            // g.RenderMode = RenderMode.FlatLight;
+            g.BaseColor = Color.White;
+            g.Light = new Light { Pos = new Vector(0, 10, 10), Color = Color.White };
 
-            // g.RenderMode = RenderMode.PhongLight;
-            g.RenderMode = RenderMode.Texture;
             g.Clear(Color.Black);
             g.DrawString($"FPS: {1000.0 / dt.Milliseconds}", defaultFont, Brushes.White, 0, 0);
             Suzanne[0].Rotation += new Vector(0, 0.1f, 0);

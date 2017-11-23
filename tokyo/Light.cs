@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace tokyo
 {
-    public enum RenderMode
+    public class Light
     {
-        WireFrame, FlatLight, PhongLight, Texture
+        public Vector Pos { get; set; }
+
+        public Color Color { get; set; }
     }
 }

@@ -17,15 +17,29 @@ namespace tokyo
 
         public GraphicDevice BackgroundGraphicDevice { get; private set; }
 
-        public GraphicBuffer(int width, int height)
+        public GraphicBuffer(ShadingMode renderMode, int width, int height)
         {
             Current = new Bitmap(width, height);
-
-            CurrentGraphicDevice = new GraphicDevice(Current);
-
             Background = new Bitmap(width, height);
-
-            BackgroundGraphicDevice = new GraphicDevice(Background);
+            switch (renderMode)
+            {
+                case ShadingMode.WireFrame:
+                    CurrentGraphicDevice = new WireFrameShading(Current);
+                    BackgroundGraphicDevice = new WireFrameShading(Background);
+                    break;
+                case ShadingMode.Flat:
+                    CurrentGraphicDevice = new FlatShading(Current);
+                    BackgroundGraphicDevice = new FlatShading(Background);
+                    break;
+                case ShadingMode.Phong:
+                    CurrentGraphicDevice = new PhongShading(Current);
+                    BackgroundGraphicDevice = new PhongShading(Background);
+                    break;
+                case ShadingMode.Texture:
+                    CurrentGraphicDevice = new TextureShading(Current);
+                    BackgroundGraphicDevice = new TextureShading(Background);
+                    break;
+            }
         }
 
         public void SwapBuffers()
