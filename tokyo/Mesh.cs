@@ -1,4 +1,8 @@
-﻿namespace tokyo
+﻿using System;
+using System.Drawing;
+using System.IO;
+
+namespace tokyo
 {
     public class Mesh
     {
@@ -12,6 +16,8 @@
 
         public string name { get; private set; }
 
+        public Texture Texture { get; set; }
+
         public Mesh(string name, int verticesCount, int surfacesCount)
         {
             this.name = name;
@@ -20,14 +26,18 @@
         }
     }
 
-    public struct Vertex
+    public class Vertex
     {
         public Vector Pos;
 
         public Vector Coord;
 
-        public Vector Normal;       
-        
+        public Vector Normal;
+
+        public float u;
+
+        public float v;
+
     }
 
     public struct Surface
@@ -44,6 +54,35 @@
         public int B;
 
         public int C;
+    }
+
+    public struct Material
+    {
+        public string Name;
+
+        public string ID;
+
+        public string DiffuseTextureName;
+    }
+
+    public class Texture
+    {
+        private Bitmap texture;
+
+        public Texture(Bitmap texture)
+        {
+            this.texture = texture;
+        }
+
+        public int Height => texture.Height;
+
+        public int Width => texture.Width;
+
+        public Color Map(int u, int v)
+        {
+            if (texture == null) return Color.White;
+            return texture.GetPixel(u, v);
+        }
     }
 
 }

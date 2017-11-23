@@ -8,6 +8,6 @@ namespace tokyo
 {
     public enum RenderMode
     {
-        WireFrame, FlatLight, PhongLight
+        WireFrame, FlatLight, PhongLight, Texture
     }
 }

@@ -85,7 +85,8 @@ namespace example
             // g.RenderMode = RenderMode.WireFrame;
             // g.RenderMode = RenderMode.FlatLight;
 
-            g.RenderMode = RenderMode.PhongLight;
+            // g.RenderMode = RenderMode.PhongLight;
+            g.RenderMode = RenderMode.Texture;
             g.Clear(Color.Black);
             g.DrawString($"FPS: {1000.0 / dt.Milliseconds}", defaultFont, Brushes.White, 0, 0);
             Suzanne[0].Rotation += new Vector(0, 0.1f, 0);

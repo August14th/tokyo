@@ -101,6 +101,9 @@ namespace tokyo
                         case RenderMode.FlatLight:
                             DrawTriangle1(v1, v2, v3);
                             break;
+                        case RenderMode.Texture:
+                            DrawTriangle1(v1, v2, v3, mesh.Texture);
+                            break;
                     }
                 }
             }
@@ -113,7 +116,7 @@ namespace tokyo
             DrawLine(v3.Pos, v1.Pos);
         }
 
-        public void DrawTriangle1(Vertex v1, Vertex v2, Vertex v3)
+        public void DrawTriangle1(Vertex v1, Vertex v2, Vertex v3, Texture texture = null)
         {
             var a = v1.Pos - v2.Pos;
             var b = v3.Pos - v2.Pos;
@@ -179,7 +182,17 @@ namespace tokyo
                         data.ndotlb = nl3;
                         data.ndotlc = nl1;
                         data.ndotld = nl2;
-                        ProcessScanLine(data, p1, p3, p1, p2);
+
+                        data.ua = v1.u;
+                        data.va = v1.v;
+                        data.ub = v3.u;
+                        data.vb = v3.v;
+
+                        data.uc = v1.u;
+                        data.vc = v1.v;
+                        data.ud = v2.u;
+                        data.vd = v2.v;
+                        ProcessScanLine(data, p1, p3, p1, p2, texture);
                     }
                     else
                     {
@@ -187,7 +200,17 @@ namespace tokyo
                         data.ndotlb = nl3;
                         data.ndotlc = nl2;
                         data.ndotld = nl3;
-                        ProcessScanLine(data, p1, p3, p2, p3);
+
+                        data.ua = v1.u;
+                        data.va = v1.v;
+                        data.ub = v3.u;
+                        data.vb = v3.v;
+
+                        data.uc = v2.u;
+                        data.vc = v2.v;
+                        data.ud = v3.u;
+                        data.vd = v3.v;
+                        ProcessScanLine(data, p1, p3, p2, p3, texture);
                     }
                 }
             }
@@ -202,7 +225,17 @@ namespace tokyo
                         data.ndotlb = nl2;
                         data.ndotlc = nl1;
                         data.ndotld = nl3;
-                        ProcessScanLine(data, p1, p2, p1, p3);
+
+                        data.ua = v1.u;
+                        data.va = v1.v;
+                        data.ub = v2.u;
+                        data.vb = v2.v;
+
+                        data.uc = v1.u;
+                        data.vc = v1.v;
+                        data.ud = v3.u;
+                        data.vd = v3.v;
+                        ProcessScanLine(data, p1, p2, p1, p3, texture);
                     }
                     else
                     {
@@ -210,7 +243,17 @@ namespace tokyo
                         data.ndotlb = nl3;
                         data.ndotlc = nl1;
                         data.ndotld = nl3;
-                        ProcessScanLine(data, p2, p3, p1, p3);
+
+                        data.ua = v2.u;
+                        data.va = v2.v;
+                        data.ub = v3.u;
+                        data.vb = v3.v;
+
+                        data.uc = v1.u;
+                        data.vc = v1.v;
+                        data.ud = v3.u;
+                        data.vd = v3.v;
+                        ProcessScanLine(data, p2, p3, p1, p3, texture);
                     }
                 }
             }
@@ -260,7 +303,9 @@ namespace tokyo
             {
                 Pos = pos,
                 Coord = world.Transform(src.Coord),
-                Normal = world.Transform(src.Normal)
+                Normal = world.Transform(src.Normal),
+                u = src.u,
+                v = src.v
             };
         }
 
@@ -274,7 +319,7 @@ namespace tokyo
             return min + (max - min) * Clamp(gradient);
         }
 
-        private void ProcessScanLine(ScanLineData data, Vector pa, Vector pb, Vector pc, Vector pd)
+        private void ProcessScanLine(ScanLineData data, Vector pa, Vector pb, Vector pc, Vector pd, Texture texture)
         {
             var gradient1 = pa.Y != pb.Y ? (data.Y - pa.Y) / (pb.Y - pa.Y) : 1;
             var gradient2 = pc.Y != pd.Y ? (data.Y - pc.Y) / (pd.Y - pc.Y) : 1;
@@ -288,21 +333,37 @@ namespace tokyo
             float snl = Interpolate(data.ndotla, data.ndotlb, gradient1);
             float enl = Interpolate(data.ndotlc, data.ndotld, gradient2);
 
+            float su = Interpolate(data.ua, data.ub, gradient1);
+            float eu = Interpolate(data.uc, data.ud, gradient2);
+            float sv = Interpolate(data.va, data.vb, gradient1);
+            float ev = Interpolate(data.vc, data.vd, gradient2);
+
             for (int x = sx; x < ex; x++)
             {
                 float gradient = (x - sx) / (float)(ex - sx);
                 var z = Interpolate(sz, ez, gradient);
-                float nl = 0;
+
+                float u = Interpolate(su, eu, gradient);
+                float v = Interpolate(sv, ev, gradient);
+
+                Color color = FrontColor;
                 switch (RenderMode)
-                {
+                {                    
                     case RenderMode.FlatLight:
-                        nl = data.ndotl;
+                        float nl = data.ndotl;
+                        color = Color.FromArgb((int)(color.R * nl), (int)(color.G * nl), (int)(color.B * nl));
                         break;
                     case RenderMode.PhongLight:
                         nl = Interpolate(snl, enl, gradient);
+                        color = Color.FromArgb((int)(color.R * nl), (int)(color.G * nl), (int)(color.B * nl));
                         break;
-                }                 
-                DrawPoint(new Vector(x, data.Y, z), Color.FromArgb((int)(FrontColor.R * nl), (int)(FrontColor.G * nl), (int)(FrontColor.A * nl)));
+                    case RenderMode.Texture:
+                        nl = Interpolate(snl, enl, gradient);
+                        color = texture.Map((int)(u * texture.Width), (int)(v * texture.Height));
+                        color = Color.FromArgb((int)(color.R * nl), (int)(color.G * nl), (int)(color.B * nl));
+                        break;
+                }
+                DrawPoint(new Vector(x, data.Y, z),color);
             }
         }
 
@@ -329,6 +390,22 @@ namespace tokyo
         public float ndotld;
 
         public float ndotl;
+
+        public float ua;
+
+        public float ub;
+
+        public float uc;
+
+        public float ud;
+
+        public float va;
+
+        public float vb;
+
+        public float vc;
+
+        public float vd;
 
         public float Y;
     }
