@@ -119,5 +119,12 @@ namespace tokyo
                 DrawPoint(new Vector(x, data.Y, z), color);
             }
         }
+
+        class ScanLineData
+        {
+            public float ndotl;
+           
+            public float Y;
+        }
     }
 }

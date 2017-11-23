@@ -37,15 +37,16 @@ namespace example
             form = new Form
             {
                 Size = new Size(Width, Height),
-                StartPosition = FormStartPosition.CenterScreen
+                StartPosition = FormStartPosition.CenterScreen,
+                Text = "tokyo"
             };
             defaultFont = new Font(new FontFamily("Microsoft Yahei"), 14);
             camera = new Camera { Position = new Vector(0, 0, 10), Target = Vector.Zero, Fov = (float)Math.PI / 4, ZNear = 0.1f, ZFar = 1f };
 
-            buffer = new GraphicBuffer(ShadingMode.WireFrame, Width, Height);
+            // buffer = new GraphicBuffer(ShadingMode.WireFrame, Width, Height);
             // buffer = new GraphicBuffer(ShadingMode.Flat, Width, Height);
             // buffer = new GraphicBuffer(ShadingMode.Phong, Width, Height);
-            // buffer = new GraphicBuffer(ShadingMode.Texture, Width, Height);
+            buffer = new GraphicBuffer(ShadingMode.Texture, Width, Height);
         }
 
         public void Run()

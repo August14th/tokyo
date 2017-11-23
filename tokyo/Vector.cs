@@ -9,7 +9,6 @@ namespace tokyo
 {
     public class Vector
     {
-
         public static Vector Zero = new Vector(0, 0, 0);
 
         public static Vector One => new Vector(1, 1, 1);
@@ -19,7 +18,6 @@ namespace tokyo
         public static Vector UnitY => new Vector(0, 1, 0);
 
         public static Vector UnitZ => new Vector(0, 0, 1);
-
 
         public float[] Values { get; }
 
