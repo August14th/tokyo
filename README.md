@@ -17,3 +17,6 @@
 支持纹理着色模式(TextureShading.cs)
 
 ![texture](https://github.com/linyuhe/tokyo/blob/master/image/texture.jpg?raw=true)
+
+## 参考文档
+[3D软件渲染器入门](https://www.kancloud.cn/digest/soft-3d-engine)

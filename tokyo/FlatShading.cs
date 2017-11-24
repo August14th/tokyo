@@ -52,11 +52,16 @@ namespace tokyo
             if (p2.Y - p1.Y > 0)
                 dP1P2 = (p2.X - p1.X) / (p2.Y - p1.Y);
             else
-                dP1P2 = 0;
+            {
+                if (p2.X > p1.X) dP1P2 = float.MaxValue; else dP1P2 = float.MinValue;
+            }
+
             if (p3.Y - p1.Y > 0)
                 dP1P3 = (p3.X - p1.X) / (p3.Y - p1.Y);
             else
-                dP1P3 = 0;
+            {
+                if (p3.X > p1.X) dP1P3 = float.MaxValue; else dP1P3 = float.MinValue;
+            }
 
             Vector facePos = (v1.Coord + v2.Coord + v3.Coord) / 3;
             Vector faceNormal = (v1.Normal + v2.Normal + v3.Normal) / 3;
@@ -71,11 +76,11 @@ namespace tokyo
                 {
                     data.Y = y;
                     if (y < p2.Y)
-                    {                        
+                    {
                         ProcessScanLine(data, p1, p3, p1, p2);
                     }
                     else
-                    {                        
+                    {
                         ProcessScanLine(data, p1, p3, p2, p3);
                     }
                 }
@@ -86,11 +91,11 @@ namespace tokyo
                 {
                     data.Y = y;
                     if (y < p2.Y)
-                    {                        
+                    {
                         ProcessScanLine(data, p1, p2, p1, p3);
                     }
                     else
-                    {                        
+                    {
                         ProcessScanLine(data, p2, p3, p1, p3);
                     }
                 }
@@ -123,7 +128,7 @@ namespace tokyo
         class ScanLineData
         {
             public float ndotl;
-           
+
             public float Y;
         }
     }
