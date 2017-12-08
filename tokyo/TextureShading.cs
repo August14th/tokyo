@@ -19,7 +19,7 @@ namespace tokyo
             var a = v1.Pos - v2.Pos;
             var b = v3.Pos - v2.Pos;
             var n = a.Cross(b);
-            var v = Camera.Target - Camera.Position;
+            var v = Camera.Forward;
             if (n.Dot(v) > 0) return;
 
             if (v1.Pos.Y > v2.Pos.Y)

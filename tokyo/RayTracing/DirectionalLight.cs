@@ -5,14 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace tokyo
+namespace tokyo.RayTracing
 {
-    public class PointLight
+    public class DirectionalLight
     {
         public Color Color { get; set; }
 
-        public Vector Pos { get; set; }
+        public Vector Direction { get; set; }
     }
-
-    
 }

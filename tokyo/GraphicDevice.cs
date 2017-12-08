@@ -28,7 +28,7 @@ namespace tokyo
             get; set;
         }
 
-        public Light Light
+        public PointLight Light
         {
             get; set;
         }
@@ -69,7 +69,7 @@ namespace tokyo
 
         public void DrawMeshes(Mesh[] meshes)
         {
-            var view = Matrix.LookAtLH(Camera.Position, Camera.Target, Vector.UnitY);
+            var view = Matrix.LookAtLH(Camera.Position, Camera.Forward, Camera.Up);
             var projection = Matrix.PerspectiveFovLH(Camera.Fov, (float)Width / Height, Camera.ZNear, Camera.ZFar);
 
             foreach (Mesh mesh in meshes)
@@ -156,7 +156,7 @@ namespace tokyo
 
         protected float ComputeNDotL(Vector vertex, Vector normal)
         {
-            Vector lightDirection = (Light.Pos - vertex).Normalize();
+            Vector lightDirection = (((PointLight)Light).Pos - vertex).Normalize();
             return Math.Max(0, lightDirection.Dot(normal.Normalize()));
         }
 

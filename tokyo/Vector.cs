@@ -11,13 +11,13 @@ namespace tokyo
     {
         public static Vector Zero = new Vector(0, 0, 0);
 
-        public static Vector One => new Vector(1, 1, 1);
+        public static Vector One = new Vector(1, 1, 1);
 
-        public static Vector UnitX => new Vector(1, 0, 0);
+        public static Vector UnitX = new Vector(1, 0, 0);
 
-        public static Vector UnitY => new Vector(0, 1, 0);
+        public static Vector UnitY = new Vector(0, 1, 0);
 
-        public static Vector UnitZ => new Vector(0, 0, 1);
+        public static Vector UnitZ = new Vector(0, 0, 1);
 
         public float[] Values { get; }
 
@@ -48,6 +48,8 @@ namespace tokyo
         }
 
         public float Length => (float)Math.Sqrt(X * X + Y * Y + Z * Z);
+
+        public float SqrLength => X * X + Y * Y + Z * Z;
 
         public Vector Normalize()
         {
@@ -83,6 +85,11 @@ namespace tokyo
         public float Dot(Vector v)
         {
             return X * v.X + Y * v.Y + Z * v.Z;
+        }
+
+        public Vector Modulate(Vector v)
+        {
+            return new Vector(X * v.X, Y * v.Y, Z * v.Z);
         }
 
         override public String ToString()

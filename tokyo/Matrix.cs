@@ -58,9 +58,9 @@ namespace tokyo
         }
 
         // https://msdn.microsoft.com/en-us/library/bb205342(v=vs.85).aspx
-        public static Matrix LookAtLH(Vector eye, Vector target, Vector up)
+        public static Matrix LookAtLH(Vector eye, Vector forward, Vector up)
         {
-            var zaxis = (target - eye).Normalize();
+            var zaxis = forward.Normalize();
             var xaxis = up.Cross(zaxis).Normalize();
             var yaxis = zaxis.Cross(xaxis).Normalize();
 
