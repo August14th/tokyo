@@ -11,11 +11,11 @@ namespace tokyo
     {
         public Bitmap Current { get; private set; }
 
-        public GraphicDevice CurrentGraphicDevice { get; private set; }
+        public GraphicDevice3D CurrentGraphicDevice { get; private set; }
 
         public Bitmap Background { get; private set; }
 
-        public GraphicDevice BackgroundGraphicDevice { get; private set; }
+        public GraphicDevice3D BackgroundGraphicDevice { get; private set; }
 
         public GraphicBuffer(ShadingMode renderMode, int width, int height)
         {

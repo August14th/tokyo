@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace tokyo
 {
-    class FlatShading : GraphicDevice
+    class FlatShading : GraphicDevice3D
     {
         public FlatShading(Bitmap bitmap) : base(bitmap)
         {

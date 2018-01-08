@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace tokyo
 {
-    class WireFrameShading : GraphicDevice
+    class WireFrameShading : GraphicDevice3D
     {
         public WireFrameShading(Bitmap bitmap) : base(bitmap)
         {
@@ -16,9 +16,9 @@ namespace tokyo
 
         public override void DrawTriangle(Vertex v1, Vertex v2, Vertex v3, Texture texture)
         {
-            DrawLine(v1.Pos, v2.Pos);
-            DrawLine(v2.Pos, v3.Pos);
-            DrawLine(v3.Pos, v1.Pos);
+            DrawLine(new Point((int)v1.Pos.X, (int)v1.Pos.Y), new Point((int)v2.Pos.X, (int)v2.Pos.Y));
+            DrawLine(new Point((int)v2.Pos.X, (int)v2.Pos.Y), new Point((int)v3.Pos.X, (int)v3.Pos.Y));
+            DrawLine(new Point((int)v3.Pos.X, (int)v3.Pos.Y), new Point((int)v1.Pos.X, (int)v1.Pos.Y));
         }
     }
 }

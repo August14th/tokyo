@@ -11,7 +11,7 @@ using tokyo.RayTracing;
 
 namespace example
 {
-    class MeshesRender
+    class DrawMeshes
     {
         private const int Width = 768;
 
@@ -23,7 +23,7 @@ namespace example
 
         Mesh[] Suzanne = new BabylonMeshLoader("babylon").Load("Suzanne");
 
-        public MeshesRender()
+        public DrawMeshes()
         {
             form = new Form
             {

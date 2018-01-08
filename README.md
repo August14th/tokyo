@@ -22,7 +22,13 @@
 
 ![reflection](https://github.com/linyuhe/tokyo/blob/master/image/reflection.jpg?raw=true)
 
+使用SDFAABB抗锯齿
+
+![sdfaabb](https://github.com/linyuhe/tokyo/blob/master/image/sdfaabb.jpg?raw=true)
+
 ## 参考文档
 [3D软件渲染器入门](https://www.kancloud.cn/digest/soft-3d-engine)
 
 [用JavaScript玩转计算机图形学(一)光线追踪入门](http://www.cnblogs.com/miloyip/archive/2010/03/29/1698953.html)
+
+[用 C 语言画直线](https://zhuanlan.zhihu.com/p/30553006)

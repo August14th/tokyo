@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace tokyo
 {
-    class PhongShading : GraphicDevice
+    class PhongShading : GraphicDevice3D
     {
         public PhongShading(Bitmap bitmap) : base(bitmap)
         {

@@ -1,27 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace tokyo
 {
-    public abstract class GraphicDevice : IDisposable
+    public abstract class GraphicDevice3D: GraphicDevice2D
     {
-        private readonly Bitmap canvas;
-
-        private readonly Graphics canvasGraphics;
-
-        private float[] zBuffer;
-
-        private byte[] bg;
-
-        private int Height => canvas.Height;
-
-        private int Width => canvas.Width;
 
         public Camera Camera
         {
@@ -33,38 +16,9 @@ namespace tokyo
             get; set;
         }
 
-        public Color BaseColor
+        public GraphicDevice3D(Bitmap bitmap):base(bitmap)
         {
-            get; set;
-        }
-
-        public GraphicDevice(Bitmap bitmap)
-        {
-            canvas = bitmap;
-            canvasGraphics = Graphics.FromImage(canvas);
-            bg = new byte[canvas.Width * canvas.Height * 4];
-            zBuffer = new float[canvas.Width * canvas.Height];
-        }       
-
-        public void Clear(Color color)
-        {
-            if (bg[0] != color.B || bg[1] != color.G || bg[2] != color.R || bg[2] != color.A)
-            {
-                for (int i = 0; i < bg.Length; i += 4)
-                {
-                    bg[i] = color.B;
-                    bg[i + 1] = color.G;
-                    bg[i + 2] = color.R;
-                    bg[i + 3] = color.A;
-                }
-            }
-            var bits = canvas.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.WriteOnly, canvas.PixelFormat);
-            Marshal.Copy(bg, 0, bits.Scan0, bg.Length);
-            canvas.UnlockBits(bits);
-            for (var index = 0; index < zBuffer.Length; index++)
-            {
-                zBuffer[index] = float.MaxValue;
-            }
+           
         }
 
         public void DrawMeshes(Mesh[] meshes)
@@ -94,17 +48,6 @@ namespace tokyo
 
         public abstract void DrawTriangle(Vertex v1, Vertex v2, Vertex v3, Texture texture);
 
-        public void DrawLine(Vector p0, Vector p1)
-        {
-            var distance = (p1 - p0).Length;
-            if (distance < 1) return;
-
-            Vector middle = (p0 + p1) / 2;
-            DrawPoint(middle, BaseColor);
-            DrawLine(p0, middle);
-            DrawLine(middle, p1);
-        }
-
         public void DrawPoint(Vector point, Color color)
         {
             int px = (int)point.X;
@@ -120,11 +63,6 @@ namespace tokyo
                 zBuffer[index] = point.Z;
                 canvas.SetPixel(px, py, color);
             }
-        }
-
-        public void DrawString(string str, Font font, Brush brush, float x, float y)
-        {
-            canvasGraphics.DrawString(str, font, brush, x, y);
         }
 
         private Vertex Project(Vertex src, Matrix transforom, Matrix world)
@@ -144,25 +82,10 @@ namespace tokyo
             };
         }
 
-        protected float Clamp(float value, float min = 0, float max = 1)
-        {
-            return Math.Max(min, Math.Min(value, max));
-        }
-
-        protected float Interpolate(float min, float max, float gradient)
-        {
-            return min + (max - min) * Clamp(gradient);
-        }
-
         protected float ComputeNDotL(Vector vertex, Vector normal)
         {
             Vector lightDirection = (((PointLight)Light).Pos - vertex).Normalize();
             return Math.Max(0, lightDirection.Dot(normal.Normalize()));
-        }
-
-        public void Dispose()
-        {
-            canvasGraphics.Dispose();
         }
     }
 }

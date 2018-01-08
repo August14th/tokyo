@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GraphicDevice3D.cs" />
     <Compile Include="RayTracing\Camera.cs" />
     <Compile Include="RayTracing\CheckerMaterial.cs" />
     <Compile Include="ColorX.cs" />
@@ -73,7 +74,7 @@
     <Compile Include="Vector.cs" />
     <Compile Include="BabylonMeshLoader.cs" />
     <Compile Include="GraphicBuffer.cs" />
-    <Compile Include="GraphicDevice.cs" />
+    <Compile Include="GraphicDevice2D.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="Matrix.cs" />
     <Compile Include="Mesh.cs" />

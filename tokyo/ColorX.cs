@@ -14,6 +14,12 @@ namespace tokyo
             return FromVector(color.Vector().Modulate(new Vector(r, r, r)));
         }
 
+        public static Color Reverse(this Color color)
+        {
+
+            return Color.FromArgb(255 - color.R, 255 - color.G, 255 - color.B);
+        }
+
         public static Color Multiply(this Color color, Vector v)
         {
             return FromVector(color.Vector().Modulate(v));

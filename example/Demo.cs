@@ -10,9 +10,9 @@ namespace example
     {
         public static void Main(String[] Args)
         {
-            // new MeshesRender().Run();
-
-            new RayTracer().Run();
+            new DrawLines().Run();
+            // new DrawMeshes().Run();
+            // new RayTracer().Run();
         }
     }
 }

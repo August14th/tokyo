@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace tokyo
 {
-    class TextureShading : GraphicDevice
+    class TextureShading : GraphicDevice3D
     {
         public TextureShading(Bitmap bitmap) : base(bitmap)
         {
