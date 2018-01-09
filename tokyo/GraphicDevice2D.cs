@@ -23,7 +23,6 @@ namespace tokyo
 
         protected int Width => canvas.Width;
 
-
         public Color BaseColor
         {
             get; set;
@@ -124,6 +123,13 @@ namespace tokyo
             float dx = pax - bax * h, dy = pay - bay * h;
 
             return (float)Math.Sqrt(dx * dx + dy * dy) - r;
+        }
+
+        // 圆形的带符号距离长
+        public float CircleSDF(float x, float y, float cx, float cy, float r)
+        {
+            float ux = x - cx, uy = y - cy;
+            return (float)Math.Sqrt(ux * ux + uy * uy) - r;
         }
 
         public void lineSDFAABB(float ax, float ay, float bx, float by, float r)

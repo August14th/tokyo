@@ -6,52 +6,29 @@ using tokyo;
 
 namespace example
 {
-    class DrawLines
+    class DrawLines : Canvas
     {
-        private const int Width = 768;
+        public static int Width = 512;
 
-        private const int Height = 768;
+        public static int Height = 512;
 
-        private Form form;
-
-        private GraphicDevice2D device;
-
-        private Bitmap canvas;
-
-        public DrawLines()
+        public DrawLines():base(Width, Height)
         {
-            form = new Form
-            {
-                Size = new Size(Width, Height),
-                StartPosition = FormStartPosition.CenterScreen,
-                Text = "tokyo"
-            };
-            canvas = new Bitmap(Width, Height);
-            device = new GraphicDevice2D(canvas);
-            device.BaseColor = Color.Black;
+            
         }
-        public void Run()
-        {
-            form.Show();
-            // DrawLineBresenham();
+
+        protected override void Draw()
+        {            
+            DrawLineBresenham();
             // DrawLineSampling();
             // DrawLineSuperSampling();
             // DrawLineSDF();
-            DrawLineSDFAABB();
-
-            while (!form.IsDisposed)
-            {
-                using (var g = form.CreateGraphics())
-                {
-                    g.DrawImage(canvas, Point.Empty);
-                }
-
-                Application.DoEvents();
-            }
+            // DrawLineSDFAABB();
         }
 
         private void DrawLineBresenham()
         {
+            device.BaseColor = Color.Black;
             device.Clear(Color.White);
             float cx = Width * 0.5f - 0.5f, cy = Height * 0.5f - 0.5f;
             for (int j = 0; j < 5; j++)
@@ -63,7 +40,6 @@ namespace example
                 for (int i = 1; i <= 64; i++, t += 2.0f * (float)Math.PI / 64f)
                 {
                     float ct = (float)Math.Cos(t), st = (float)Math.Sin(t);
-
                     device.DrawLine(new Point((int)(cx + r1 * ct), (int)(cy - r1 * st)), new Point((int)(cx + r2 * ct), (int)(cy - r2 * st)));
                 }
             }
@@ -171,6 +147,6 @@ namespace example
                 }
             }
             return s;
-        }
+        }        
     }
 }

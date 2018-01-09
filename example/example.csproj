@@ -48,7 +48,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Canvas.cs" />
     <Compile Include="Demo.cs" />
+    <Compile Include="DrawLight.cs" />
     <Compile Include="DrawLines.cs" />
     <Compile Include="RayTracer.cs" />
     <Compile Include="DrawMeshes.cs" />
