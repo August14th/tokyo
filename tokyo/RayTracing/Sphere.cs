@@ -6,43 +6,39 @@ using System.Threading.Tasks;
 
 namespace tokyo.RayTracing
 {
-    public class Sphere: Geometry
+    public class Sphere: IGeometry
     {
-        private Vector Center;
+        private readonly Vector _center;
 
-        private float Radius;
+        private readonly float _sqrRadius;
 
-        private float SqrRadius;
-
-        private IMaterial Material;
+        private readonly IMaterial _material;
 
         public Sphere(Vector center, float radius, IMaterial material)
         {
-            Center = center;
-            Radius = radius;
-
-            SqrRadius = Radius * Radius;
-            Material = material;
+            _center = center;
+            _sqrRadius = radius * radius;
+            _material = material;
         }
         
         public Intersection Intersect(Ray ray)
         {
-            Vector v = ray.Pos - Center;
+            Vector v = ray.Pos - _center;
 
-            float diff = v.SqrLength - SqrRadius;
-            float DdotV = ray.Direction.Dot(v);
+            float diff = v.SqrLength - _sqrRadius;
+            float dDotV = ray.Direction.Dot(v);
 
-            if (DdotV <= 0)
+            if (dDotV <= 0)
             {
-                float discr = DdotV * DdotV - diff;
+                float discr = dDotV * dDotV - diff;
                 if (discr >= 0)
                 {
                     Intersection i = new Intersection();
-                    i.Gemoemtry = this;
-                    i.Distance = -DdotV - (float)Math.Sqrt(discr);
-                    i.Position = ray.getPoint(i.Distance);
+                    i.Geometry = this;
+                    i.Distance = -dDotV - (float)Math.Sqrt(discr);
+                    i.Position = ray.GetPoint(i.Distance);
 
-                    i.Normal = (i.Position - Center).Normalize();
+                    i.Normal = (i.Position - _center).Normalize();
 
                     return i;
                 }
@@ -51,9 +47,9 @@ namespace tokyo.RayTracing
             return Intersection.NoHit;
         }
 
-        public IMaterial Materail()
+        public IMaterial Material()
         {
-            return Material;
+            return _material;
         }
     }
 }

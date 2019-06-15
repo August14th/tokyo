@@ -8,7 +8,7 @@ namespace tokyo.RayTracing
 {
     public class Intersection
     {
-        public Geometry Gemoemtry { get; set;}
+        public IGeometry Geometry { get; set;}
 
         public float Distance { get; set; }
 
@@ -16,7 +16,7 @@ namespace tokyo.RayTracing
 
         public Vector Normal { get; set; }
 
-        public static Intersection NoHit = new Intersection();
+        public static readonly Intersection NoHit = new Intersection();
 
     }
 }

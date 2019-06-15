@@ -9,15 +9,15 @@ namespace tokyo
 {
     public class Vector
     {
-        public static Vector Zero = new Vector(0, 0, 0);
+        public static readonly Vector Zero = new Vector(0, 0, 0);
 
-        public static Vector One = new Vector(1, 1, 1);
+        public static readonly Vector One = new Vector(1, 1, 1);
 
-        public static Vector UnitX = new Vector(1, 0, 0);
+        public static readonly Vector UnitX = new Vector(1, 0, 0);
 
-        public static Vector UnitY = new Vector(0, 1, 0);
+        public static readonly Vector UnitY = new Vector(0, 1, 0);
 
-        public static Vector UnitZ = new Vector(0, 0, 1);
+        public static readonly Vector UnitZ = new Vector(0, 0, 1);
 
         public float[] Values { get; }
 
@@ -31,23 +31,23 @@ namespace tokyo
 
         public float X
         {
-            get { return Values[0]; }
-            set { Values[0] = value; }
+            get => Values[0];
+            set => Values[0] = value;
         }
 
         public float Y
         {
-            get { return Values[1]; }
-            set { Values[1] = value; }
+            get => Values[1];
+            set => Values[1] = value;
         }
 
         public float Z
         {
-            get { return Values[2]; }
-            set { Values[2] = value; }
+            get => Values[2];
+            set => Values[2] = value;
         }
 
-        public float Length => (float)Math.Sqrt(X * X + Y * Y + Z * Z);
+        public float Length => (float) Math.Sqrt(X * X + Y * Y + Z * Z);
 
         public float SqrLength => X * X + Y * Y + Z * Z;
 
@@ -92,9 +92,9 @@ namespace tokyo
             return new Vector(X * v.X, Y * v.Y, Z * v.Z);
         }
 
-        override public String ToString()
+        public override string ToString()
         {
-            return "(" + this.X + ", " + this.Y + ", " + this.Z + ")";
+            return "(" + X + ", " + Y + ", " + Z + ")";
         }
     }
 }

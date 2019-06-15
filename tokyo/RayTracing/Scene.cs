@@ -11,29 +11,28 @@ namespace tokyo.RayTracing
     {
         public readonly DirectionalLight Light;
 
-        private Geometry[] items;
+        private readonly IGeometry[] _items;
 
-        public Scene(DirectionalLight light, Geometry[] items)
+        public Scene(DirectionalLight light, IGeometry[] items)
         {
-            this.Light = light;
-            this.items = items;
+            Light = light;
+            _items = items;
         }
 
         public Intersection Intersect(Ray ray)
         {
             float minDistance = float.MaxValue;
-            Intersection minInterset = Intersection.NoHit;
-            foreach (Geometry item in items)
+            Intersection minResult = Intersection.NoHit;
+            foreach (IGeometry item in _items)
             {
                 Intersection i = item.Intersect(ray);
                 if (i != Intersection.NoHit && i.Distance < minDistance)
                 {
                     minDistance = i.Distance;
-                    minInterset = i;
+                    minResult = i;
                 }
             }
-
-            return minInterset;
+            return minResult;
         }
     }
 }

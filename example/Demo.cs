@@ -12,8 +12,8 @@ namespace example
         {
             // new DrawLines().Run();            
             // new DrawMeshes().Run();
-            // new RayTracer().Run();
-            new DrawLight().Run();
+            new RayTracer().Run();
+            // new DrawLight().Run();
         }
     }
 }

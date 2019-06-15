@@ -19,7 +19,7 @@ namespace tokyo.RayTracing
             Direction = direction.Normalize();
         }
 
-        public Vector getPoint(float distance)
+        public Vector GetPoint(float distance)
         {
             return Pos + Direction * distance;
         }

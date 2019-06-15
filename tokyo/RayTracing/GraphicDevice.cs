@@ -9,18 +9,18 @@ namespace tokyo.RayTracing
 {
     public class GraphicDevice : IDisposable
     {
-        private readonly Bitmap canvas;
+        private readonly Bitmap _canvas;
 
-        private readonly Graphics canvasGraphics;
+        private readonly Graphics _canvasGraphics;
 
-        private int Height => canvas.Height;
+        private int Height => _canvas.Height;
 
-        private int Width => canvas.Width;
+        private int Width => _canvas.Width;
 
         public GraphicDevice(Bitmap bitmap)
         {
-            canvas = bitmap;
-            canvasGraphics = Graphics.FromImage(canvas);
+            _canvas = bitmap;
+            _canvasGraphics = Graphics.FromImage(_canvas);
         }
 
         public void RayTracing(Camera camera, Scene scene)
@@ -31,12 +31,12 @@ namespace tokyo.RayTracing
                 for (int px = 0; px < Width; px++)
                 {
                     float sx = (float)px / Width - 0.5f;
-                    Ray ray = camera.generateRay(sx, sy);
+                    Ray ray = camera.GenerateRay(sx, sy);
                     Intersection i = scene.Intersect(ray);
-                    if (i.Gemoemtry != null)
+                    if (i.Geometry != null)
                     {
-                        Color color = i.Gemoemtry.Materail().Sample(ray, i.Position, i.Normal, scene.Light);
-                        canvas.SetPixel(px, py, color);
+                        Color color = i.Geometry.Material().Sample(ray, i.Position, i.Normal, scene.Light);
+                        _canvas.SetPixel(px, py, color);
                     }
                 }
             }
@@ -45,14 +45,13 @@ namespace tokyo.RayTracing
         private Color RayTraceRecursive(Scene scene, Ray ray, int maxReflect)
         {
             Intersection i = scene.Intersect(ray);
-
             if (i != Intersection.NoHit)
             {
-                float reflectiveness = i.Gemoemtry.Materail().Reflectiveness();
-                Color color = i.Gemoemtry.Materail().Sample(ray, i.Position, i.Normal, scene.Light);
+                float reflectiveness = i.Geometry.Material().Reflectiveness();
+                Color color = i.Geometry.Material().Sample(ray, i.Position, i.Normal, scene.Light);
                 if (reflectiveness > 0 && maxReflect > 0)
                 {
-                    Vector reflectDirection = ray.Direction + (i.Normal * -2 * i.Normal.Dot(ray.Direction));
+                    Vector reflectDirection = ray.Direction + i.Normal * -2 * i.Normal.Dot(ray.Direction);
                     Ray reflectRay = new Ray(i.Position, reflectDirection);
                     Color reflectColor = RayTraceRecursive(scene, reflectRay, maxReflect - 1);
 
@@ -60,10 +59,7 @@ namespace tokyo.RayTracing
                 }
                 return color;
             }
-            else
-            {
-                return Color.Black;
-            }
+            return Color.Black;
         }
 
         public void RayTracingReflection(Camera camera, Scene scene, int maxReflect)
@@ -74,17 +70,17 @@ namespace tokyo.RayTracing
                 for (int px = 0; px < Width; px++)
                 {
                     float sx = (float)px / Width - 0.5f;
-                    Ray ray = camera.generateRay(sx, sy);
+                    Ray ray = camera.GenerateRay(sx, sy);
 
                     Color color = RayTraceRecursive(scene, ray, maxReflect);
-                    canvas.SetPixel(px, py, color);
+                    _canvas.SetPixel(px, py, color);
                 }
             }
         }
 
         public void Dispose()
         {
-            canvasGraphics.Dispose();
+            _canvasGraphics.Dispose();
         }
     }
 }

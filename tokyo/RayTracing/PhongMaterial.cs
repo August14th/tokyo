@@ -9,28 +9,28 @@ namespace tokyo.RayTracing
 {
     public class PhongMaterial : IMaterial
     {
-        private Color diffuse;
-        private Color specular;
-        private float shininess;
-        private float reflectiveness;
+        private readonly Color _diffuse;
+        private readonly Color _specular;
+        private readonly float _shininess;
+        private readonly float _reflectiveness;
 
         public PhongMaterial(Color diffuse, Color specular, float shininess, float reflectiveness)
         {
-            this.diffuse = diffuse;
-            this.specular = specular;
-            this.shininess = shininess;
-            this.reflectiveness = reflectiveness;
+            _diffuse = diffuse;
+            _specular = specular;
+            _shininess = shininess;
+            _reflectiveness = reflectiveness;
         }
 
         public Color Sample(Ray ray, Vector position, Vector normal, DirectionalLight light)
         {            
-            float NdotL = normal.Dot(light.Direction);
+            float nDotL = normal.Dot(light.Direction); // diffuse部分，和视角方向无关
 
-            Vector H = (light.Direction - ray.Direction).Normalize();
-            float NdotH = normal.Dot(H);
+            Vector H = (light.Direction - ray.Direction).Normalize(); 
+            float nDotH = normal.Dot(H); // specular部分，blinn模型
 
-            Color diffuseTerm = diffuse.Multiply(Math.Max(NdotL, 0));
-            Color specularTerm = specular.Multiply((float)(Math.Pow(Math.Max(NdotH, 0), shininess)));
+            Color diffuseTerm = _diffuse.Multiply(Math.Max(nDotL, 0));
+            Color specularTerm = _specular.Multiply((float)Math.Pow(Math.Max(nDotH, 0), _shininess));
 
             Color term = diffuseTerm.Add(specularTerm);
             return light.Color.Multiply(term);
@@ -38,7 +38,7 @@ namespace tokyo.RayTracing
 
         float IMaterial.Reflectiveness()
         {
-            return reflectiveness;
+            return _reflectiveness;
         }
     }
 }

@@ -21,7 +21,7 @@ namespace example
 
         private Form form;
 
-        private tokyo.RayTracing.GraphicDevice device;
+        private GraphicDevice device;
 
         public RayTracer()
         {
@@ -37,10 +37,10 @@ namespace example
         {
             form.Show();
             Bitmap canvas = new Bitmap(Width, Height);
-            device = new tokyo.RayTracing.GraphicDevice(canvas);
+            device = new GraphicDevice(canvas);
 
             Scene scene = new Scene(new DirectionalLight { Direction = new Vector(1, 1, 1).Normalize(), Color = Color.White },
-                new Geometry[]{
+                new IGeometry[]{
                  new Sphere(new Vector(-10, 10, -10), 8, new PhongMaterial(Color.Red, Color.White, 8f, 0.25f)),
                  new Sphere(new Vector(10, 10, -10), 8, new PhongMaterial(Color.Blue, Color.White, 8f, 0.25f)),
                  new Plane(new Vector(0, 1, 0), 0, new CheckerMaterial(0.1f, 0.25f))

@@ -1,51 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace tokyo.RayTracing
+﻿namespace tokyo.RayTracing
 {
-    public class Plane : Geometry
+    public class Plane : IGeometry
     {
-        private Vector normal;
+        private readonly Vector _normal;
 
-        private float d;
+        private float _d;
 
-        private Vector position;
+        private readonly Vector _position;
 
-        private IMaterial material;
+        private readonly IMaterial _material;
 
         public Plane(Vector normal, float d, IMaterial material)
         {
-            this.normal = normal;
-            this.d = d;
-            this.material = material;
-            this.position = this.normal * d;
+            _normal = normal;
+            _d = d;
+            _material = material;
+            _position = _normal * d;
         }
 
-        public IMaterial Materail()
+        public IMaterial Material()
         {
-            return material;
+            return _material;
         }
 
         public Intersection Intersect(Ray ray)
         {
-            float a = ray.Direction.Dot(this.normal);
-
-            if(a >= 0)
-            {
-                return Intersection.NoHit;
-            }
-
-            float b = this.normal.Dot(ray.Pos - this.position);
+            float a = ray.Direction.Dot(_normal);
+            if(a >= 0) return Intersection.NoHit;
+            float b = _normal.Dot(ray.Pos - _position);
             var i = new Intersection();
 
-            i.Gemoemtry = this;
+            i.Geometry = this;
             i.Distance = -b / a;
-            i.Position = ray.getPoint(i.Distance);
+            i.Position = ray.GetPoint(i.Distance);
 
-            i.Normal = this.normal;
+            i.Normal = _normal;
             return i;
 
         }

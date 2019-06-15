@@ -59,7 +59,7 @@
     <Compile Include="RayTracing\DirectionalLight.cs" />
     <Compile Include="RayTracing\GraphicDevice.cs" />
     <Compile Include="RayTracing\Scene.cs" />
-    <Compile Include="RayTracing\Geometry.cs" />
+    <Compile Include="RayTracing\IGeometry.cs" />
     <Compile Include="RayTracing\Intersection.cs" />
     <Compile Include="RayTracing\IMaterial.cs" />
     <Compile Include="RayTracing\PhongMaterial.cs" />

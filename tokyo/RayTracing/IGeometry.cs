@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace tokyo.RayTracing
 {
-    public interface Geometry
+    public interface IGeometry
     {
-        IMaterial Materail();
+        IMaterial Material();
 
         Intersection Intersect(Ray ray);
     }
